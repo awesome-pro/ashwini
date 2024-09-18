@@ -5,7 +5,6 @@ import { Patient, PrismaClient } from "@prisma/client";
 import axios from "axios";
 import { promises } from "dns";
 import { sendSMS, sendWhatsApp } from "./sms";
-import { getNearestAvailableDoctorQueue } from "./doctorQueue";
 
 export type Data = {
     name?: string;

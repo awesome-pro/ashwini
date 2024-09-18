@@ -71,7 +71,7 @@ async function createDoctorQueue(doctorId: string): Promise<Queue> {
 export async function deleteQueuesAtEndOfDay() {
     const now = new Date();
     const endTime = new Date();
-    endTime.setHours(18, 0, 0, 0); // 06:00 PM
+    endTime.setHours(21, 0, 0, 0); // 06:00 PM
   
     const delay = endTime.getTime() - now.getTime();
   
