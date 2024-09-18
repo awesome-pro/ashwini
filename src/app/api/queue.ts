@@ -17,8 +17,12 @@ export type Data = {
 }
 
 // create a localhost redis client
-export const client = createClient({
-  url: "redis://localhost:6379",
+const client = createClient({
+  password: process.env.REDIS_PASSWORD,
+  socket: {
+      host: process.env.REDIS_URL,
+      port: parseInt(process.env.REDIS_PORT as string)
+  }
 });
 
 export const connection = new IORedis({
@@ -74,7 +78,7 @@ export const worker = new Worker(
 
     console.log("Processing job from Worker: ", job.id);
     const result = await processQueue(job);
-    if(result === "completed"){
+    if(result !== undefined){
       console.log("Worker Job completed: ", job.id);
         await job.updateProgress({ state: 'completed' });
     }
@@ -91,7 +95,6 @@ export const worker = new Worker(
 // };
 
 worker.on('completed', job => {
-    console.log(job);
       // send SMS to patient with number +91-8130635690
     // sendSMS("+918130635690", 
     //   `Your appointment has been scheduled successfully. Details:
@@ -101,13 +104,14 @@ worker.on('completed', job => {
     //   Duration: ${job.returnvalue.durationMins}
     //   `
     // );
-    sendWhatsApp("+918130635690", `Your appointment has been scheduled successfully. Details:
-      ID: ${job.returnvalue.id}
-      Date: ${job.returnvalue.date}
-      Doctor: ${job.returnvalue.doctorName}
-      Duration: ${job.returnvalue.durationMins}
-      `);
+    // sendWhatsApp("+918130635690", `Your appointment has been scheduled successfully. Details:
+    //   ID: ${job.returnvalue.id}
+    //   Date: ${job.returnvalue.date}
+    //   Doctor: ${job.returnvalue.doctorName}
+    //   Duration: ${job.returnvalue.durationMins}
+    // `);
 
+    console.log(`From Worker -->  ${job.id} has completed and returned ${job.returnvalue}`);
   });
   worker.on('progress', (job: Job, progress: number | object) => {
     // Do something with the return value.
@@ -197,7 +201,7 @@ queueEvents.on('waiting', ({ jobId }) => {
       //       return;
       //   }
 
-      const doctorId = "cm11mzj20000d4nipgua3or0k";
+      const doctorId = "cm17rcvqj0000fualc47ce5m6";
       // 11:00 AM of today
       const lastBookingTime = new Date();
       lastBookingTime.setHours(11, 0, 0, 0);
