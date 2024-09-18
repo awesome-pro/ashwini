@@ -2,6 +2,12 @@
 
 <img src="/public/opd.png" width="600px" />
 
+## Important Links
+1. [Documentation & Low Level Design](https://app.eraser.io/workspace/MHpqxq6BCLBfAfOeUnav?origin=share)
+2. [Demo Video](https://www.loom.com/share/5b602d97a29546cda7d3aa77d31d0f5c?sid=163f90ff-da45-4ea4-b8ed-d6f087983f55)
+3. [Postman Collections](https://www.postman.com/abhinandan-verma/abhinandan/collection/tqn8zfl/aarogya?action=share&creator=31971900)
+4. Hosting is coming soon :)
+
 ## Project Overview
 
 **Ashwini** is an AI-driven OPD (Outpatient Department) queue management system designed to streamline appointment scheduling in hospitals. By automating the queue generation process and leveraging AI to assign patients to doctors based on real-time availability, Ashwini minimizes patient wait times and enhances the overall hospital experience. The system utilizes a modern tech stack, including **Next.js**, **Node.js**, **Redis**, **BullMQ**, **Twilio**, and Python-based AI models.
