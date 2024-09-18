@@ -10,32 +10,7 @@ export const connection = new IORedis({
 });
 
 // Store queues by doctorId
-export const doctorQueues: Map<string, Queue> = new Map();
-const prisma = new PrismaClient();
 
-async function createDoctorQueue(doctorId: string): Promise<Queue> {
-    // Check if the queue already exists, if so, return it
-    if (doctorQueues.has(doctorId)) {
-      return doctorQueues.get(doctorId)!; // Non-null assertion as we know it exists
-    }
-  
-    // Create a new queue for the doctor
-    const doctorQueue = new Queue(doctorId, {
-      connection,
-      defaultJobOptions: {
-        removeOnComplete: true,
-        removeOnFail: false,
-      },
-    });
-
-     // Schedule the queue to delete automatically after 6:00 PM on the day of creation
-     scheduleQueueDeletion(doctorId, doctorQueue);
-
-    // Store the queue in the map
-    doctorQueues.set(doctorId, doctorQueue);
-
-    return doctorQueue;
-}
   
 async function scheduleQueueDeletion(doctorId: string, queue: Queue) {
     const now = new Date();

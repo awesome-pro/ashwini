@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { queue, addJob, client, connection, worker, queueEvents, Data } from "../queue";
+import { queue, addJob, connection, worker, queueEvents, Data } from "../queue";
 import { Job } from "bullmq";
 import axios from "axios";
 

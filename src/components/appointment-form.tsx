@@ -56,8 +56,7 @@ function AppointmentForm() {
       setResponse(responseData.data.jobId as string);
       toast({
         title: `Patient created successfully!`,
-        description: `Patient ID: ${responseData.data.jobId}`,
-        icon: <AiOutlineCheckCircle className="text-green-500" />,
+        description: `Patient ID: ${responseData.data.jobId}`
       });
     } catch (error) {
       toast({
@@ -77,8 +76,7 @@ function AppointmentForm() {
       setResponse(responseData.data.jobId as string);
       toast({
         title: `Appointment requested successfully!`,
-        description: `Request ID: ${responseData.data.jobId}`,
-        icon: <AiOutlineCheckCircle className="text-green-500" />,
+        description: `Request ID: ${responseData.data.jobId}`
       });
     } catch (error) {
       toast({
