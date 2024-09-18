@@ -1,11 +1,15 @@
+"use client";
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faClock, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import Link from 'next/link';
 
 function QueuePage() {
-  // Extended mock data for the queue
+  const router = useRouter();
+
   const queueData = [
     {
       patientId: 'P001',
@@ -86,6 +90,7 @@ function QueuePage() {
                 <TableHead className="py-3 px-4 text-gray-600">Doctor ID</TableHead>
                 <TableHead className="py-3 px-4 text-gray-600">Doctor Name</TableHead>
                 <TableHead className="py-3 px-4 text-gray-600">Status</TableHead>
+                <TableHead className="py-3 px-4 text-gray-600">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -114,6 +119,13 @@ function QueuePage() {
                     >
                       {item.status}
                     </span>
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-center">
+                    <Link href={`/queue/${item.patientId}`}>
+                      <button className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition">
+                        Check Status
+                      </button>
+                    </Link>
                   </TableCell>
                 </TableRow>
               ))}
