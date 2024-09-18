@@ -1,6 +1,6 @@
 # Ashwini - Revolutionizing OPD Queue Management with AI
 
-<img src="/public/opd.png" width="600px">
+<img src="/public/opd.png" width="600px" />
 
 ## Project Overview
 
