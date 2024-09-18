@@ -7,7 +7,7 @@ export default function Home() {
 
   return (
    <main className="min-h-screen w-full">
-      <Navbar/>
+      {/* <Navbar/>       */}
       <Hero/>
       <Cta />
       <FAQ />
