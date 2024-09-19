@@ -71,7 +71,7 @@ async function createDoctorQueue(doctorId: string): Promise<Queue> {
 export async function deleteQueuesAtEndOfDay() {
     const now = new Date();
     const endTime = new Date();
-    endTime.setHours(21, 0, 0, 0); // 06:00 PM
+    endTime.setHours(23, 0, 0, 0); // 06:00 PM
   
     const delay = endTime.getTime() - now.getTime();
   
@@ -89,4 +89,26 @@ export async function deleteQueuesAtEndOfDay() {
     }
   }
 
-  // Function to create queues for all doctors at 08:00 AM on working days
+  // function to find the nearest available doctor queue
+  export async function getNearestAvailableDoctorQueue(): Promise<Queue> {
+    const now = new Date();
+    const endTime = new Date();
+    endTime.setHours(23, 0, 0, 0); // 06:00 PM
+  
+    const delay = endTime.getTime() - now.getTime();
+  
+    // check for the queue which have least number of jobs
+    let minJobs = Number.MAX_SAFE_INTEGER;
+
+    let nearestQueue: Queue | null = null;
+
+    for (const queue of doctorQueues.values()) {
+        const jobs = await queue.getJobCounts();
+        if(jobs.waiting < minJobs){
+            minJobs = jobs.waiting;
+            nearestQueue = queue;
+        }
+    }
+
+    return nearestQueue!;
+  }

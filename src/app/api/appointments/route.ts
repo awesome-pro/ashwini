@@ -36,16 +36,7 @@ export async function POST(req: NextRequest) {
     console.log("From Appointment POST: ", doctorId, patientId, date, gender, name, age, email, phone);
 
     try {
-        // const appointment = await prisma.appointment.create({
-        //     data: {
-        //         patientId: patientId,
-        //         doctorId: doctorId,
-        //         date: new Date(date)
-        //     }
-        // })
-        // console.log(appointment)
-        // return NextResponse.json(appointment, { status: 201 })
-
+       
         // add job to queue
         const data: Data = {
             patientId: patientId,

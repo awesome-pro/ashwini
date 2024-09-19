@@ -1,10 +1,11 @@
 import { createClient } from "redis";
-import { Queue, Worker, QueueEvents, Job } from "bullmq";
+import { Queue, Worker, QueueEvents, Job,  } from "bullmq";
 import IORedis from 'ioredis';
 import { Patient, PrismaClient } from "@prisma/client";
 import axios from "axios";
 import { promises } from "dns";
 import { sendSMS, sendWhatsApp } from "./sms";
+import { getNearestAvailableDoctorQueue } from "@/queue/createQueue";
 
 export type Data = {
     name?: string;
@@ -17,18 +18,18 @@ export type Data = {
 
 // create a localhost redis client
 const client = createClient({
-  password: process.env.REDIS_PASSWORD,
+  //password: process.env.REDIS_PASSWORD,
   socket: {
-      host: process.env.REDIS_URL,
-      port: parseInt(process.env.REDIS_PORT as string)
+      host: 'localhost',
+      port: 6379
   }
 });
 
 export const connection = new IORedis({
-    host: process.env.REDIS_URL,
-    port: parseInt(process.env.REDIS_PORT as string),
+    host: 'localhost',
+    port: 6379,
     maxRetriesPerRequest: null,
-    password: process.env.REDIS_PASSWORD
+    //password: process.env.REDIS_PASSWORD
 });
 
 
@@ -66,15 +67,12 @@ export async function addJob(data: Data): Promise<string> {
     return job.id as string;
 }
 
+
 // create a worker for the queue
 export const worker = new Worker(
   "queue",
   async (job: Job) => {
     console.log("From Worker <---->", job.data);
-
-    await job.updateProgress(42);
-
-    await job.updateProgress({ state: 'completed' });
 
     console.log("Processing job from Worker: ", job.id);
     const result = await processQueue(job);
@@ -85,9 +83,7 @@ export const worker = new Worker(
 
     return result;
   },
-  {
-    connection: connection,
-  }
+  { connection }
 );
 
 // worker.processJob = async (job: Job) => {
@@ -125,7 +121,6 @@ worker.on('error', (err) => {
     console.error("From Worker -->  ",err);
 });
 
-
 // create a queue event listener
 export const queueEvents = new  QueueEvents("queue");
 
@@ -151,8 +146,6 @@ queueEvents.on('waiting', ({ jobId }) => {
 
   async function processQueue(job: Job){
     console.log(job.data);
-    await job.updateProgress(42);
-    await job.updateProgress({ state: 'completed' });
 
     const data = await job.data.data
 
@@ -194,17 +187,23 @@ queueEvents.on('waiting', ({ jobId }) => {
           patient = newPatient.data;
         }
         
-      //  const { doctorId, lastBookingTime } = await getNearestAvailableDoctorQueue();
-      //   if(!doctorId){
-      //       console.error("Doctor not found");
-      //       await job.updateProgress({ state: 'failed' });
-      //       return;
-      //   }
+     const nearestQueue = await getNearestAvailableDoctorQueue();
 
-      const doctorId = "cm17rcvqj0000fualc47ce5m6";
-      // 11:00 AM of today
-      const lastBookingTime = new Date();
-      lastBookingTime.setHours(11, 0, 0, 0);
+      const doctorId = nearestQueue.name;
+     // last booking time is 12mins+ data of the latest added job
+
+     let lastBookingTime = new Date();
+    const latestAddedJob  =  await nearestQueue.getActive(0, 0);
+    if(latestAddedJob.length === 0){
+        // set the booking time to 10:00 AM
+        lastBookingTime.setHours(10, 0, 0, 0);
+    }else{
+      const lastBookingTime = new Date(latestAddedJob[0]?.timestamp || Date.now());
+      lastBookingTime.setMinutes(lastBookingTime.getMinutes() + 12);
+    }
+    console.log("Latest Job: ", latestAddedJob);
+    
+      //lastBookingTime.setHours(11, 0, 0, 0);
       console.log("Doctor Id: ", doctorId, "Last Booking Time: ", lastBookingTime, "Patient: ", patient);
         // create appointment
         const appointment = await prisma.appointment.create({

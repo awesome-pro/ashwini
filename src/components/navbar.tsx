@@ -19,7 +19,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-black text-white w-full shadow-md px-5 py-2">
+    <nav className="sticky top-0 z-50 bg-blue-600/40 text-white w-full shadow-md px-5 py-2">
       <div className="flex justify-between items-center">
         {/* Logo */}
         <Link className="flex items-center" href="/">
